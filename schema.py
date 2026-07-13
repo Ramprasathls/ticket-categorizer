@@ -10,6 +10,7 @@ class IssueCategory(str, Enum):
     PRODUCT = "product_issue"
     ACCOUNT = "account_issue"
     REFUND = "refund_request"
+    SECURITY = "security_issue"
     OTHER = "other"
 
 
@@ -19,6 +20,7 @@ class TeamOwner(str, Enum):
     LOGISTICS = "logistics_team"
     CUSTOMER_SUPPORT = "customer_support"
     TECH = "tech_team"
+    SECURITY_TEAM = "security_team"
 
 
 class Priority(str, Enum):

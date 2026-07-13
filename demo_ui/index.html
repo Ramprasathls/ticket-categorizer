@@ -1,323 +1,890 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support Ticket Classifier</title>
+  <title>Ticket Classifier — AI-Powered Support Triage</title>
+  <meta name="description" content="Classify customer support tickets instantly with AI. Detects priority, sentiment, PII, and routes to the right team." />
   <style>
+    /* ================================================================
+       ATLASSIAN DESIGN TOKENS
+       ================================================================ */
+    :root {
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      --radius-sm: 3px;
+      --radius-md: 4px;
+      --radius-lg: 8px;
+      --radius-pill: 3px;
+      --transition: 0.2s ease-in-out;
+    }
+
+    /* ---------- DARK THEME (Atlassian Dark) ---------- */
+    [data-theme="dark"] {
+      --bg-body: #1D2125;
+      --bg-surface: #22272B;
+      --bg-surface-raised: #282E33;
+      --bg-input: #22272B;
+      --bg-header: #1D2125;
+      --bg-footer: #1D2125;
+      --bg-hover: #2C333A;
+      --border: rgba(166, 197, 226, 0.16);
+      --border-input: rgba(166, 197, 226, 0.24);
+      --border-focus: #579DFF;
+      --text-primary: #B6C2CF;
+      --text-heading: #DEE4EA;
+      --text-secondary: #8C9BAB;
+      --text-muted: #626F86;
+      --text-inverse: #1D2125;
+      --blue: #579DFF;
+      --blue-hover: #85B8FF;
+      --blue-subtle-bg: rgba(87, 157, 255, 0.08);
+      /* Lozenges */
+      --loz-red-bg: #42221F;
+      --loz-red-text: #F87168;
+      --loz-yellow-bg: #332E1B;
+      --loz-yellow-text: #F5CD47;
+      --loz-green-bg: #1C3329;
+      --loz-green-text: #4BCE97;
+      --loz-blue-bg: #1C2B41;
+      --loz-blue-text: #579DFF;
+      --loz-purple-bg: #2B2340;
+      --loz-purple-text: #9F8FEF;
+      /* Flag */
+      --flag-yellow-bg: #332E1B;
+      --flag-yellow-border: rgba(245, 205, 71, 0.24);
+      --flag-yellow-text: #F5CD47;
+      --flag-red-bg: #42221F;
+      --flag-red-border: rgba(248, 113, 104, 0.24);
+      --flag-red-text: #F87168;
+      /* Misc */
+      --skeleton-from: rgba(166, 197, 226, 0.04);
+      --skeleton-to: rgba(166, 197, 226, 0.1);
+      --shadow: 0 1px 1px rgba(3,4,4,0.5), 0 0 1px rgba(3,4,4,0.6);
+      --bar-track: #2C333A;
+      --bar-fill: #579DFF;
+    }
+
+    /* ---------- LIGHT THEME (Atlassian Light) ---------- */
+    [data-theme="light"] {
+      --bg-body: #F7F8F9;
+      --bg-surface: #FFFFFF;
+      --bg-surface-raised: #FFFFFF;
+      --bg-input: #F7F8F9;
+      --bg-header: #FFFFFF;
+      --bg-footer: #FFFFFF;
+      --bg-hover: #F1F2F4;
+      --border: rgba(9, 30, 66, 0.14);
+      --border-input: rgba(9, 30, 66, 0.24);
+      --border-focus: #0C66E4;
+      --text-primary: #172B4D;
+      --text-heading: #091E42;
+      --text-secondary: #44546F;
+      --text-muted: #626F86;
+      --text-inverse: #FFFFFF;
+      --blue: #0C66E4;
+      --blue-hover: #0055CC;
+      --blue-subtle-bg: rgba(12, 102, 228, 0.06);
+      /* Lozenges */
+      --loz-red-bg: #FFECEB;
+      --loz-red-text: #AE2E24;
+      --loz-yellow-bg: #FFF7D6;
+      --loz-yellow-text: #7F5F01;
+      --loz-green-bg: #DCFFF1;
+      --loz-green-text: #216E4E;
+      --loz-blue-bg: #E9F2FF;
+      --loz-blue-text: #0055CC;
+      --loz-purple-bg: #F3F0FF;
+      --loz-purple-text: #5E4DB2;
+      /* Flag */
+      --flag-yellow-bg: #FFF7D6;
+      --flag-yellow-border: rgba(127, 95, 1, 0.24);
+      --flag-yellow-text: #7F5F01;
+      --flag-red-bg: #FFECEB;
+      --flag-red-border: rgba(174, 46, 36, 0.24);
+      --flag-red-text: #AE2E24;
+      /* Misc */
+      --skeleton-from: rgba(9, 30, 66, 0.04);
+      --skeleton-to: rgba(9, 30, 66, 0.1);
+      --shadow: 0 1px 1px rgba(9,30,66,0.25), 0 0 1px rgba(9,30,66,0.31);
+      --bar-track: #F1F2F4;
+      --bar-fill: #0C66E4;
+    }
+
+    /* ================================================================
+       RESET & BASE
+       ================================================================ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #0f1117;
-      color: #e2e8f0;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.42857;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      transition: background var(--transition), color var(--transition);
+      -webkit-font-smoothing: antialiased;
     }
 
-    header {
-      background: #1a1d27;
-      border-bottom: 1px solid #2d3148;
-      padding: 1rem 2rem;
+    /* ================================================================
+       HEADER
+       ================================================================ */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      height: 48px;
+      padding: 0 16px;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      justify-content: space-between;
+      transition: background var(--transition), border-color var(--transition);
     }
-    header h1 { font-size: 1.25rem; font-weight: 700; color: #a78bfa; }
-    header span { font-size: 0.8rem; color: #64748b; }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--blue);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .header-icon svg { width: 16px; height: 16px; }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-heading);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Theme Toggle — Jira-style minimal button */
+    .theme-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition), color var(--transition);
+    }
+    .theme-toggle:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+    .theme-toggle svg { width: 18px; height: 18px; }
+
+    /* ================================================================
+       MAIN LAYOUT
+       ================================================================ */
     .main {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      padding: 1.5rem 2rem;
-      max-width: 1400px;
+      gap: 16px;
+      padding: 20px 24px;
+      max-width: 1280px;
       width: 100%;
       margin: 0 auto;
     }
 
     @media (max-width: 768px) {
-      .main { grid-template-columns: 1fr; }
+      .main {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 12px;
+      }
     }
 
+    /* ================================================================
+       PANEL (Cards)
+       ================================================================ */
     .panel {
-      background: #1a1d27;
-      border: 1px solid #2d3148;
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 16px;
+      box-shadow: var(--shadow);
+      transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
     }
 
     .panel-title {
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #7c85a6;
+      color: var(--text-muted);
     }
 
-    /* Sample buttons */
-    .samples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    /* ================================================================
+       SAMPLE BUTTONS
+       ================================================================ */
+    .samples { display: flex; flex-wrap: wrap; gap: 6px; }
+
     .sample-btn {
-      background: #252a3d;
-      border: 1px solid #3b4268;
-      color: #94a3b8;
-      font-size: 0.75rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 6px;
+      background: var(--bg-hover);
+      border: none;
+      color: var(--text-secondary);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      transition: background var(--transition), color var(--transition);
     }
-    .sample-btn:hover { background: #2d3450; border-color: #6366f1; color: #c7d2fe; }
+    .sample-btn:hover {
+      background: var(--blue-subtle-bg);
+      color: var(--blue);
+    }
+
+    /* ================================================================
+       TEXTAREA
+       ================================================================ */
+    .textarea-wrap { flex: 1; display: flex; flex-direction: column; }
 
     textarea {
       width: 100%;
       flex: 1;
-      min-height: 180px;
-      background: #0f1117;
-      border: 1px solid #2d3148;
-      border-radius: 8px;
-      color: #e2e8f0;
-      font-size: 0.92rem;
-      line-height: 1.6;
-      padding: 0.75rem 1rem;
+      min-height: 200px;
+      background: var(--bg-input);
+      border: 2px solid var(--border-input);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 8px 10px;
       resize: vertical;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color var(--transition), background var(--transition);
     }
-    textarea:focus { border-color: #6366f1; }
-    textarea::placeholder { color: #4b5563; }
+    textarea:focus {
+      border-color: var(--border-focus);
+    }
+    textarea::placeholder { color: var(--text-muted); }
 
-    .controls { display: flex; gap: 0.75rem; align-items: center; }
+    /* ================================================================
+       CONTROLS
+       ================================================================ */
+    .controls { display: flex; gap: 8px; align-items: center; }
 
     select {
-      background: #252a3d;
-      border: 1px solid #3b4268;
-      color: #94a3b8;
-      padding: 0.4rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-input);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
       outline: none;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
     }
+    select:focus { border-color: var(--border-focus); }
 
     .classify-btn {
       flex: 1;
-      background: #6366f1;
+      background: var(--blue);
       border: none;
       color: #fff;
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 0.6rem 1.5rem;
-      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      transition: background var(--transition);
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .classify-btn:hover { background: #4f46e5; }
-    .classify-btn:active { transform: scale(0.98); }
-    .classify-btn:disabled { background: #374151; cursor: not-allowed; color: #6b7280; }
+    .classify-btn:hover { background: var(--blue-hover); }
+    .classify-btn:active { opacity: 0.9; }
+    .classify-btn:disabled {
+      background: var(--bg-hover);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
 
-    /* Result cards */
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+    /* ================================================================
+       RESULT — DETAIL ROWS (Jira issue sidebar style)
+       ================================================================ */
+    .detail-list {
+      display: flex;
+      flex-direction: column;
     }
 
-    .card {
-      background: #0f1117;
-      border: 1px solid #2d3148;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
+    .detail-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+      animation: rowIn 0.25s ease-out both;
     }
-    .card-label {
-      font-size: 0.7rem;
+    .detail-row:last-child { border-bottom: none; }
+
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-row:nth-child(1) { animation-delay: 0.00s; }
+    .detail-row:nth-child(2) { animation-delay: 0.04s; }
+    .detail-row:nth-child(3) { animation-delay: 0.08s; }
+    .detail-row:nth-child(4) { animation-delay: 0.12s; }
+    .detail-row:nth-child(5) { animation-delay: 0.16s; }
+    .detail-row:nth-child(6) { animation-delay: 0.20s; }
+    .detail-row:nth-child(7) { animation-delay: 0.24s; }
+
+    .detail-label {
+      width: 120px;
+      min-width: 120px;
+      font-size: 12px;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #4b5563;
-      margin-bottom: 0.3rem;
-    }
-    .card-value {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #e2e8f0;
+      color: var(--text-muted);
+      padding-top: 2px;
     }
 
-    .card-wide { grid-column: 1 / -1; }
+    .detail-value {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-heading);
+    }
 
-    .badge {
+    .detail-value--secondary {
+      font-weight: 400;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 480px) {
+      .detail-row {
+        flex-direction: column;
+        gap: 2px;
+      }
+      .detail-label {
+        width: auto;
+        min-width: auto;
+      }
+    }
+
+    /* ================================================================
+       JIRA LOZENGES
+       ================================================================ */
+    .lozenge {
       display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
+      padding: 1px 6px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.02em;
+      line-height: 1.6;
     }
 
-    .priority-low    { background: #14532d33; color: #4ade80; border: 1px solid #166534; }
-    .priority-medium { background: #78350f33; color: #fbbf24; border: 1px solid #92400e; }
-    .priority-high   { background: #7c3aed33; color: #c4b5fd; border: 1px solid #6d28d9; }
-    .priority-critical { background: #7f1d1d33; color: #f87171; border: 1px solid #991b1b; }
+    .loz-critical { background: var(--loz-red-bg);    color: var(--loz-red-text); }
+    .loz-high     { background: var(--loz-purple-bg); color: var(--loz-purple-text); }
+    .loz-medium   { background: var(--loz-yellow-bg); color: var(--loz-yellow-text); }
+    .loz-low      { background: var(--loz-green-bg);  color: var(--loz-green-text); }
 
-    .sentiment-positive { background: #14532d33; color: #4ade80; border: 1px solid #166534; }
-    .sentiment-neutral  { background: #1e3a5f33; color: #60a5fa; border: 1px solid #1d4ed8; }
-    .sentiment-negative { background: #78350f33; color: #fbbf24; border: 1px solid #92400e; }
-    .sentiment-angry    { background: #7f1d1d33; color: #f87171; border: 1px solid #991b1b; }
+    .loz-angry    { background: var(--loz-red-bg);    color: var(--loz-red-text); }
+    .loz-negative { background: var(--loz-yellow-bg); color: var(--loz-yellow-text); }
+    .loz-neutral  { background: var(--loz-blue-bg);   color: var(--loz-blue-text); }
+    .loz-positive { background: var(--loz-green-bg);  color: var(--loz-green-text); }
 
-    .confidence-bar-wrap {
-      background: #252a3d;
-      border-radius: 999px;
-      height: 8px;
+    /* ================================================================
+       CONFIDENCE BAR
+       ================================================================ */
+    .confidence-wrap { width: 100%; }
+
+    .confidence-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 4px;
+    }
+    .confidence-pct {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .confidence-track {
+      background: var(--bar-track);
+      border-radius: 4px;
+      height: 6px;
       overflow: hidden;
-      margin-top: 0.4rem;
     }
-    .confidence-bar {
+    .confidence-fill {
       height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(to right, #6366f1, #a78bfa);
-      transition: width 0.4s ease;
+      border-radius: 4px;
+      background: var(--bar-fill);
+      width: 0%;
+      transition: width 0.6s ease-out;
     }
 
-    /* Status strip */
-    .status-strip {
-      background: #1a1d27;
-      border-top: 1px solid #2d3148;
-      padding: 0.6rem 2rem;
+    /* ================================================================
+       FLAGS
+       ================================================================ */
+    .flag {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      font-size: 0.78rem;
-      color: #4b5563;
-      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+      animation: rowIn 0.25s ease-out both;
+      animation-delay: 0.28s;
     }
-    .status-item { display: flex; align-items: center; gap: 0.35rem; }
-    .status-item span.label { color: #4b5563; }
-    .status-item span.value { color: #94a3b8; font-weight: 600; }
-    .pii-badge { color: #f87171; font-weight: 700; }
-    .pii-clean { color: #4ade80; font-weight: 700; }
-
-    /* Spinner */
-    .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid #6366f155;
-      border-top-color: #6366f1;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-      margin-right: 0.4rem;
-      vertical-align: middle;
+    .flag-review {
+      background: var(--flag-yellow-bg);
+      border: 1px solid var(--flag-yellow-border);
+      color: var(--flag-yellow-text);
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .error-msg {
-      background: #7f1d1d22;
-      border: 1px solid #991b1b;
-      color: #f87171;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 0.85rem;
+    .flag-injection {
+      background: var(--flag-red-bg);
+      border: 1px solid var(--flag-red-border);
+      color: var(--flag-red-text);
     }
 
+    /* ================================================================
+       EMPTY STATE
+       ================================================================ */
     .empty-state {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       flex: 1;
-      color: #374151;
-      gap: 0.5rem;
+      gap: 8px;
       text-align: center;
-      padding: 2rem;
+      padding: 40px 20px;
+      color: var(--text-muted);
     }
-    .empty-state svg { opacity: 0.3; }
-    .empty-state p { font-size: 0.85rem; }
+    .empty-state svg { width: 40px; height: 40px; opacity: 0.3; color: var(--text-muted); }
+    .empty-state p { font-size: 13px; max-width: 240px; line-height: 1.5; }
 
-    .human-review-flag {
-      background: #78350f33;
-      border: 1px solid #92400e;
-      color: #fbbf24;
-      border-radius: 6px;
-      padding: 0.4rem 0.75rem;
-      font-size: 0.8rem;
+    /* ================================================================
+       SKELETON (Flat)
+       ================================================================ */
+    .skeleton-list { display: flex; flex-direction: column; }
+
+    .skeleton-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+    .skeleton-row:last-child { border-bottom: none; }
+
+    .skeleton-line {
+      height: 10px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 50%, var(--skeleton-from) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .sk-label { width: 100px; height: 8px; }
+    .sk-value { flex: 1; max-width: 160px; height: 12px; }
+    .sk-bar   { flex: 1; height: 6px; }
+    .sk-text  { flex: 1; height: 10px; }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ================================================================
+       ERROR
+       ================================================================ */
+    .error-msg {
+      background: var(--flag-red-bg);
+      border: 1px solid var(--flag-red-border);
+      color: var(--flag-red-text);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ================================================================
+       SPINNER
+       ================================================================ */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ================================================================
+       FOOTER
+       ================================================================ */
+    .footer {
+      background: var(--bg-footer);
+      border-top: 1px solid var(--border);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .footer-metrics {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .metric {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .metric .m-label { font-weight: 400; }
+    .metric .m-value { font-weight: 600; color: var(--text-secondary); }
+    .metric .m-clean { font-weight: 600; color: var(--loz-green-text); }
+    .metric .m-alert { font-weight: 700; color: var(--loz-red-text); }
+
+    .footer-powered {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    @media (max-width: 768px) {
+      .footer {
+        padding: 8px 12px;
+        justify-content: center;
+        text-align: center;
+      }
+      .footer-metrics { justify-content: center; }
+    }
+
+    /* ================================================================
+       SCROLLBAR
+       ================================================================ */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ================================================================
+       NOTICE MODAL
+       ================================================================ */
+    #noticeBackdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(9, 30, 66, 0.54);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #noticeBackdrop.hidden { display: none; }
+
+    #noticeModal {
+      background: var(--bg-surface-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      max-width: 480px;
+      width: 100%;
+      padding: 28px 28px 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.36);
+    }
+
+    #noticeModal .notice-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    #noticeModal .notice-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--blue-subtle-bg);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    #noticeModal .notice-icon svg {
+      width: 18px;
+      height: 18px;
+      color: var(--blue);
+    }
+    #noticeModal .notice-title {
+      font-size: 16px;
       font-weight: 600;
-      grid-column: 1 / -1;
+      color: var(--text-heading);
+      letter-spacing: -0.01em;
+    }
+    #noticeModal .notice-body {
+      font-size: 13.5px;
+      color: var(--text-primary);
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+    #noticeModal .notice-body ul {
+      margin: 10px 0 10px 18px;
+      padding: 0;
+    }
+    #noticeModal .notice-body ul li {
+      margin-bottom: 5px;
+    }
+    #noticeModal .notice-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    #noticeModal .notice-btn {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    #noticeModal .notice-btn:hover { background: var(--blue-hover); }
+
+    @media (max-width: 480px) {
+      #noticeModal { padding: 20px 18px 18px; }
+      #noticeModal .notice-title { font-size: 15px; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
-    <path stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
-  </svg>
-  <h1>Support Ticket Classifier</h1>
-  <span>LangGraph + Gemini</span>
+<!-- ============================================================
+     NOTICE MODAL
+     ============================================================ -->
+<div id="noticeBackdrop" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
+  <div id="noticeModal">
+    <div class="notice-header">
+      <div class="notice-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+      </div>
+      <span class="notice-title" id="noticeTitle">Ticket Categorizer</span>
+    </div>
+    <div class="notice-body">
+      <p>Welcome! This is a live demo of an <strong>AI-powered support ticket classifier</strong> built with <strong>LangGraph</strong> and the <strong>Gemini API</strong>.</p>
+      <p>Before you start testing, a quick note:</p>
+      <p>This demo runs on a personal API key with real usage costs. I would really appreciate if you could:</p>
+      <ul>
+        <li>Limit yourself to <strong>3–5 test classifications</strong> per session</li>
+        <li>Avoid sending very long or repeated tickets</li>
+        <li>Use the provided sample tickets to get a feel for how it works</li>
+      </ul>
+      <p>Your understanding goes a long way, thank you for being mindful!</p>
+    </div>
+    <div class="notice-footer">
+      <button class="notice-btn" id="noticeDismiss">Got it</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var backdrop = document.getElementById('noticeBackdrop');
+    var btn = document.getElementById('noticeDismiss');
+    if (sessionStorage.getItem('noticeSeen')) {
+      backdrop.classList.add('hidden');
+    }
+    function dismiss() {
+      backdrop.classList.add('hidden');
+      sessionStorage.setItem('noticeSeen', '1');
+    }
+    btn.addEventListener('click', dismiss);
+    backdrop.addEventListener('click', function (e) {
+      if (e.target === backdrop) dismiss();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') dismiss();
+    });
+  })();
+</script>
+
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 12l2 2 4-4"/>
+        <rect x="3" y="3" width="18" height="18" rx="3"/>
+      </svg>
+    </div>
+    <span class="header-title">Ticket Classifier</span>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg id="iconMoon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      <svg id="iconSun" viewBox="0 0 24 24" fill="currentColor" style="display:none"><circle cx="12" cy="12" r="5"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
+    </button>
+  </div>
 </header>
 
+<!-- ============================================================
+     MAIN
+     ============================================================ -->
 <div class="main">
 
-  <!-- LEFT: Input Panel -->
+  <!-- LEFT: Input -->
   <div class="panel">
     <div class="panel-title">Ticket Input</div>
 
     <div class="samples">
-      <button class="sample-btn" onclick="fillSample(0)">📦 Delayed Delivery</button>
-      <button class="sample-btn" onclick="fillSample(1)">💳 Double Charged</button>
-      <button class="sample-btn" onclick="fillSample(2)">🔐 Login Broken</button>
+      <button class="sample-btn" id="sample0" onclick="fillSample(0)">📦 Delayed Delivery</button>
+      <button class="sample-btn" id="sample1" onclick="fillSample(1)">💳 Double Charged</button>
+      <button class="sample-btn" id="sample2" onclick="fillSample(2)">🔐 Login Broken</button>
+      <button class="sample-btn" id="sample3" onclick="fillSample(3)">🚨 Security Alert</button>
     </div>
 
-    <textarea id="ticketText" placeholder="Paste or type a customer support ticket here…"></textarea>
+    <div class="textarea-wrap">
+      <textarea id="ticketText" placeholder="Enter support ticket text…"></textarea>
+    </div>
 
     <div class="controls">
       <select id="channel">
         <option value="web_form">Web Form</option>
         <option value="email">Email</option>
       </select>
-      <button class="classify-btn" id="classifyBtn" onclick="classify()">Classify Ticket</button>
+      <button class="classify-btn" id="classifyBtn" onclick="classify()">Classify</button>
     </div>
   </div>
 
-  <!-- RIGHT: Results Panel -->
+  <!-- RIGHT: Results -->
   <div class="panel" id="resultsPanel">
     <div class="panel-title">Classification Result</div>
+
+    <!-- Empty -->
     <div class="empty-state" id="emptyState">
-      <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
-        <path stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
       </svg>
       <p>Submit a ticket to see the classification result</p>
     </div>
-    <div class="result-grid" id="resultGrid" style="display:none;"></div>
+
+    <!-- Skeleton -->
+    <div class="skeleton-list" id="skeletonState" style="display:none;">
+      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value"></div></div>
+      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value"></div></div>
+      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value" style="max-width:80px"></div></div>
+      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value" style="max-width:90px"></div></div>
+      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-bar"></div></div>
+      <div class="skeleton-row" style="border-bottom:none"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-text"></div></div>
+    </div>
+
+    <!-- Result -->
+    <div id="resultArea" style="display:none;"></div>
   </div>
 
 </div>
 
-<!-- BOTTOM: Status strip -->
-<div class="status-strip" id="statusStrip">
-  <div class="status-item">
-    <span class="label">Tokens</span>
-    <span class="value" id="statusTokens">—</span>
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="footer-metrics">
+    <div class="metric">
+      <span class="m-label">Tokens</span>
+      <span class="m-value" id="statusTokens">—</span>
+    </div>
+    <div class="metric">
+      <span class="m-label">Cost</span>
+      <span class="m-value" id="statusCost">—</span>
+    </div>
+    <div class="metric">
+      <span class="m-label">PII</span>
+      <span class="m-value" id="statusPii">—</span>
+    </div>
+    <div class="metric">
+      <span class="m-label">Prompt</span>
+      <span class="m-value" id="statusPrompt">—</span>
+    </div>
   </div>
-  <div class="status-item">
-    <span class="label">Cost</span>
-    <span class="value" id="statusCost">—</span>
-  </div>
-  <div class="status-item">
-    <span class="label">PII</span>
-    <span class="value" id="statusPii">—</span>
-  </div>
-  <div class="status-item">
-    <span class="label">Prompt</span>
-    <span class="value" id="statusPrompt">—</span>
-  </div>
-</div>
+  <div class="footer-powered">Powered by LangGraph &amp; Gemini API</div>
+</footer>
 
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
 <script>
+/* ------- Theme ------- */
+(function initTheme() {
+  const saved = localStorage.getItem('tc-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  syncIcons();
+})();
+
+function syncIcons() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.getElementById('iconMoon').style.display = dark ? 'block' : 'none';
+  document.getElementById('iconSun').style.display  = dark ? 'none'  : 'block';
+}
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('tc-theme', next);
+  syncIcons();
+});
+
+/* ------- Samples ------- */
 const SAMPLES = [
   {
     channel: "web_form",
@@ -331,24 +898,29 @@ const SAMPLES = [
     channel: "web_form",
     text: "I can't log into my account at all. I keep getting 'Invalid credentials' even though I just reset my password 3 times. I need to access my order history urgently. Please help — I've been locked out for 2 days.",
   },
+  {
+    channel: "email",
+    text: "URGENT SECURITY ISSUE: I found a vulnerability in your web application that allows me to view other users' billing details by changing the URL id parameter. This is a severe API IDOR security flaw. Please escalate this to your security team immediately.",
+  },
 ];
 
-function fillSample(index) {
-  const s = SAMPLES[index];
-  document.getElementById("ticketText").value = s.text;
-  document.getElementById("channel").value = s.channel;
+function fillSample(i) {
+  document.getElementById("ticketText").value = SAMPLES[i].text;
+  document.getElementById("channel").value = SAMPLES[i].channel;
 }
 
-function priorityClass(p) {
-  return { low: "priority-low", medium: "priority-medium", high: "priority-high", critical: "priority-critical" }[p] || "";
+/* ------- Helpers ------- */
+function lozPriority(p) {
+  return { low:"loz-low", medium:"loz-medium", high:"loz-high", critical:"loz-critical" }[p] || "";
 }
-function sentimentClass(s) {
-  return { positive: "sentiment-positive", neutral: "sentiment-neutral", negative: "sentiment-negative", angry: "sentiment-angry" }[s] || "";
+function lozSentiment(s) {
+  return { positive:"loz-positive", neutral:"loz-neutral", negative:"loz-negative", angry:"loz-angry" }[s] || "";
 }
-function formatCategory(s) {
+function fmt(s) {
   return s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 }
 
+/* ------- Classify ------- */
 async function classify() {
   const text = document.getElementById("ticketText").value.trim();
   if (!text) { alert("Please enter a ticket."); return; }
@@ -357,8 +929,9 @@ async function classify() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>Classifying…';
 
-  document.getElementById("emptyState").style.display = "flex";
-  document.getElementById("resultGrid").style.display = "none";
+  document.getElementById("emptyState").style.display   = "none";
+  document.getElementById("resultArea").style.display    = "none";
+  document.getElementById("skeletonState").style.display = "flex";
 
   try {
     const resp = await fetch("http://localhost:8000/classify", {
@@ -366,76 +939,88 @@ async function classify() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ticket_text: text, channel: document.getElementById("channel").value }),
     });
-
     if (!resp.ok) {
       const err = await resp.json();
       throw new Error(err.detail || resp.statusText);
     }
-
-    const data = await resp.json();
-    renderResult(data);
+    renderResult(await resp.json());
   } catch (e) {
+    document.getElementById("skeletonState").style.display = "none";
+    document.getElementById("emptyState").style.display    = "flex";
     document.getElementById("emptyState").innerHTML =
-      `<div class="error-msg">Error: ${e.message}</div>`;
+      `<div class="error-msg">⚠ Error: ${e.message}</div>`;
   } finally {
     btn.disabled = false;
-    btn.textContent = "Classify Ticket";
+    btn.textContent = "Classify";
   }
 }
 
+/* ------- Render ------- */
 function renderResult(d) {
-  const grid = document.getElementById("resultGrid");
-  const confPct = Math.round(d.confidence_score * 100);
+  const area = document.getElementById("resultArea");
+  const pct  = Math.round(d.confidence_score * 100);
 
-  grid.innerHTML = `
-    <div class="card">
-      <div class="card-label">Category</div>
-      <div class="card-value">${formatCategory(d.issue_category)}</div>
+  let html = `<div class="detail-list">
+    <div class="detail-row">
+      <div class="detail-label">Category</div>
+      <div class="detail-value">${fmt(d.issue_category)}</div>
     </div>
-    <div class="card">
-      <div class="card-label">Assigned Team</div>
-      <div class="card-value">${formatCategory(d.assigned_team)}</div>
+    <div class="detail-row">
+      <div class="detail-label">Assigned Team</div>
+      <div class="detail-value">${fmt(d.assigned_team)}</div>
     </div>
-    <div class="card">
-      <div class="card-label">Priority</div>
-      <div class="card-value">
-        <span class="badge ${priorityClass(d.priority)}">${d.priority.toUpperCase()}</span>
+    <div class="detail-row">
+      <div class="detail-label">Priority</div>
+      <div class="detail-value"><span class="lozenge ${lozPriority(d.priority)}">${d.priority}</span></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Sentiment</div>
+      <div class="detail-value"><span class="lozenge ${lozSentiment(d.user_sentiment)}">${d.user_sentiment}</span></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label">Confidence</div>
+      <div class="detail-value">
+        <div class="confidence-wrap">
+          <div class="confidence-header"><span class="confidence-pct">${pct}%</span></div>
+          <div class="confidence-track"><div class="confidence-fill" id="confBar"></div></div>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-label">Sentiment</div>
-      <div class="card-value">
-        <span class="badge ${sentimentClass(d.user_sentiment)}">${d.user_sentiment.toUpperCase()}</span>
-      </div>
+    <div class="detail-row">
+      <div class="detail-label">Reasoning</div>
+      <div class="detail-value detail-value--secondary">${d.reasoning}</div>
     </div>
-    <div class="card card-wide">
-      <div class="card-label">Confidence Score — ${confPct}%</div>
-      <div class="confidence-bar-wrap">
-        <div class="confidence-bar" style="width:${confPct}%"></div>
-      </div>
-    </div>
-    <div class="card card-wide">
-      <div class="card-label">Reasoning</div>
-      <div class="card-value" style="font-weight:400;font-size:0.88rem;line-height:1.5">${d.reasoning}</div>
-    </div>
-    ${d.requires_human_review ? '<div class="human-review-flag">⚠ Flagged for human review</div>' : ""}
-    ${d.injection_blocked ? '<div class="human-review-flag" style="color:#f87171;border-color:#991b1b">🚫 Injection attempt blocked</div>' : ""}
-  `;
+  </div>`;
 
-  // Status strip
-  const cost = d.cost_info;
-  document.getElementById("statusTokens").textContent =
-    cost ? `${cost.input_tokens} in / ${cost.output_tokens} out` : "—";
-  document.getElementById("statusCost").textContent =
-    cost ? `$${cost.total_cost_usd.toFixed(6)}` : "—";
-  document.getElementById("statusPii").innerHTML =
-    d.pii_detected
-      ? '<span class="pii-badge">PII DETECTED</span>'
-      : '<span class="pii-clean">Clean</span>';
+  if (d.requires_human_review) {
+    html += `<div class="flag flag-review">⚠ Flagged for human review</div>`;
+  }
+  if (d.injection_blocked) {
+    html += `<div class="flag flag-injection">🚫 Injection attempt blocked</div>`;
+  }
+
+  area.innerHTML = html;
+
+  // Animate bar
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const bar = document.getElementById("confBar");
+      if (bar) bar.style.width = pct + "%";
+    });
+  });
+
+  // Status
+  const c = d.cost_info;
+  document.getElementById("statusTokens").textContent = c ? `${c.input_tokens} in / ${c.output_tokens} out` : "—";
+  document.getElementById("statusCost").textContent   = c ? `$${c.total_cost_usd.toFixed(6)}` : "—";
+  document.getElementById("statusPii").innerHTML      = d.pii_detected
+    ? '<span class="m-alert">PII DETECTED</span>'
+    : '<span class="m-clean">Clean</span>';
   document.getElementById("statusPrompt").textContent = d.prompt_version || "—";
 
-  document.getElementById("emptyState").style.display = "none";
-  grid.style.display = "grid";
+  document.getElementById("skeletonState").style.display = "none";
+  document.getElementById("emptyState").style.display    = "none";
+  area.style.display = "block";
 }
 </script>
 </body>

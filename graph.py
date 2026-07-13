@@ -18,7 +18,7 @@ from schema import TicketClassification
 from production_modules.pii_redaction import redact_pii
 from production_modules.prompt_injection import check_injection
 from production_modules.prompt_versioning import get_active_prompt, get_active_version
-from production_modules.structured_output import classify_with_json_mode
+from production_modules.structured_output import classify_with_function_calling, classify_with_json_mode
 from production_modules.validate_response import validate_classification
 from production_modules.cost_calculator import calculate_cost, count_tokens
 from production_modules.fallback_retry import classify_with_fallback, SAFE_CLASSIFICATION
@@ -68,11 +68,15 @@ def classify_node(state: dict) -> dict:
     active = get_active_prompt()
     version = get_active_version()
     ticket_text = state.get("redacted_ticket") or state["raw_ticket"]
+    
+    template = active["template"]
+    if "{channel}" in template:
+        template = template.format(channel=state.get("channel", "web_form"))
 
     try:
-        classification = classify_with_json_mode(
+        classification = classify_with_function_calling(
             ticket_text=ticket_text,
-            system_prompt=active["template"],
+            system_prompt=template,
             model=DEFAULT_MODEL,
         )
         return {**state, "classification": classification, "prompt_version": version}
@@ -108,7 +112,11 @@ def fallback_node(state: dict) -> dict:
     logger.warning("Entering fallback node — delegating to classify_with_fallback")
     ticket_text = state.get("redacted_ticket") or state["raw_ticket"]
 
-    classification = classify_with_fallback(ticket_text=ticket_text, model=DEFAULT_MODEL)
+    classification = classify_with_fallback(
+        ticket_text=ticket_text,
+        model=DEFAULT_MODEL,
+        channel=state.get("channel", "web_form"),
+    )
     validation_status = "pass" if classification.confidence_score > 0.0 else "fallback_safe"
 
     return {

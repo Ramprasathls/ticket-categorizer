@@ -40,6 +40,25 @@ Think step by step before classifying:
 4. Assign a priority based on business impact and customer sentiment.
 5. Flag for human review if ambiguous or high-stakes.""",
     },
+    "v3": {
+        "version_id": "v3",
+        "model": "gemini-flash-latest",
+        "created_at": "2026-07-12",
+        "description": "Adds channel awareness to prioritization and classification rules",
+        # System instructions only — ticket text and JSON format are injected by
+        # classify_with_json_mode, not here.
+        "template": """You are an expert customer support ticket classifier.
+The customer submitted this ticket via the '{channel}' channel.
+
+Think step by step before classifying:
+1. Identify the core problem the customer is facing.
+2. Assess the emotional tone and urgency.
+3. Determine which team is best equipped to resolve this.
+4. Assign a priority based on business impact and customer sentiment:
+   - If the channel is 'email', be slightly more lenient with urgency (prefer MEDIUM/HIGH unless explicitly critical).
+   - If the channel is 'web_form', expect shorter, direct queries that are time-sensitive, and elevate priority if the user indicates blocker issues.
+5. Flag for human review if ambiguous or high-stakes.""",
+    },
 }
 
 

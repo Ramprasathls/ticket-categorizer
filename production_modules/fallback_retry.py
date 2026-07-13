@@ -30,6 +30,7 @@ from pydantic import ValidationError
 from schema import TicketClassification, IssueCategory, TeamOwner, Priority, Sentiment
 from production_modules.validate_response import validate_classification
 from production_modules.structured_output import (
+    classify_with_function_calling,
     classify_with_json_mode,
     SIMPLE_SYSTEM_PROMPT,
 )
@@ -57,7 +58,7 @@ SAFE_CLASSIFICATION = TicketClassification(
     retry=retry_if_exception_type((GoogleAPIError, ValidationError)),
     before_sleep=before_sleep_log(logger, logging.WARNING),
 )
-def classify_with_retry(ticket_text: str, model: str = _DEFAULT_MODEL) -> TicketClassification:
+def classify_with_retry(ticket_text: str, model: str = _DEFAULT_MODEL, channel: str = "web_form") -> TicketClassification:
     """
     Attempt classification via classify_with_json_mode with automatic retry.
     On the first retry, switches to a simpler conservative system prompt.
@@ -70,7 +71,10 @@ def classify_with_retry(ticket_text: str, model: str = _DEFAULT_MODEL) -> Ticket
     else:
         system_prompt = get_active_prompt()["template"]
 
-    result = classify_with_json_mode(
+    if "{channel}" in system_prompt:
+        system_prompt = system_prompt.format(channel=channel)
+
+    result = classify_with_function_calling(
         ticket_text=ticket_text,
         system_prompt=system_prompt,
         model=model,
@@ -86,10 +90,10 @@ def classify_with_retry(ticket_text: str, model: str = _DEFAULT_MODEL) -> Ticket
     return validation.validated_classification
 
 
-def classify_with_fallback(ticket_text: str, model: str = _DEFAULT_MODEL) -> TicketClassification:
+def classify_with_fallback(ticket_text: str, model: str = _DEFAULT_MODEL, channel: str = "web_form") -> TicketClassification:
     """Top-level function: tries classify_with_retry, returns SAFE_CLASSIFICATION on total failure."""
     try:
-        return classify_with_retry(ticket_text, model)
+        return classify_with_retry(ticket_text, model, channel)
     except Exception as exc:
         logger.error("All retries exhausted: %s. Returning safe classification.", exc)
         return SAFE_CLASSIFICATION

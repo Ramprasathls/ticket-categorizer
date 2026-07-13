@@ -65,7 +65,7 @@ def classify_with_function_calling(
     model: str = _DEFAULT_MODEL,
     seed: int = 42,
 ) -> TicketClassification:
-    llm = ChatGoogleGenerativeAI(model=model, temperature=0, seed=seed)
+    llm = ChatGoogleGenerativeAI(model=model, temperature=0, seed=seed, max_output_tokens=1024)
     structured_llm = llm.with_structured_output(TicketClassification)
 
     prompt = ChatPromptTemplate.from_messages([
@@ -102,6 +102,7 @@ def classify_with_json_mode(
         model=model,
         temperature=0,
         seed=seed,
+        max_output_tokens=1024,
         response_mime_type="application/json",
     )
 
@@ -112,7 +113,12 @@ def classify_with_json_mode(
 
     chain = prompt | llm
     response = chain.invoke({"ticket_text": ticket_text})
-    raw = json.loads(_extract_text(response.content))
+    content_str = _extract_text(response.content)
+    try:
+        raw = json.loads(content_str)
+    except json.JSONDecodeError as err:
+        print(f"DEBUG: JSON parse failed. Raw content: {content_str}")
+        raise err
     return TicketClassification.model_validate(raw)
 
 
