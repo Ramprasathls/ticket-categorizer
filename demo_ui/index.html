@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ticket Categorizer — AI-Powered Support Triage</title>
-  <meta name="description" content="Classify customer support tickets instantly with AI. Detects priority, sentiment, PII, and routes to the right team." />
+  <meta name="description"
+    content="Classify customer support tickets instantly with AI. Detects priority, sentiment, PII, and routes to the right team." />
   <style>
     /* ================================================================
        ATLASSIAN DESIGN TOKENS
@@ -59,7 +61,7 @@
       /* Misc */
       --skeleton-from: rgba(166, 197, 226, 0.04);
       --skeleton-to: rgba(166, 197, 226, 0.1);
-      --shadow: 0 1px 1px rgba(3,4,4,0.5), 0 0 1px rgba(3,4,4,0.6);
+      --shadow: 0 1px 1px rgba(3, 4, 4, 0.5), 0 0 1px rgba(3, 4, 4, 0.6);
       --bar-track: #2C333A;
       --bar-fill: #579DFF;
     }
@@ -105,7 +107,7 @@
       /* Misc */
       --skeleton-from: rgba(9, 30, 66, 0.04);
       --skeleton-to: rgba(9, 30, 66, 0.1);
-      --shadow: 0 1px 1px rgba(9,30,66,0.25), 0 0 1px rgba(9,30,66,0.31);
+      --shadow: 0 1px 1px rgba(9, 30, 66, 0.25), 0 0 1px rgba(9, 30, 66, 0.31);
       --bar-track: #F1F2F4;
       --bar-fill: #0C66E4;
     }
@@ -113,7 +115,13 @@
     /* ================================================================
        RESET & BASE
        ================================================================ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       background: var(--bg-body);
@@ -161,7 +169,11 @@
       justify-content: center;
       flex-shrink: 0;
     }
-    .header-icon svg { width: 16px; height: 16px; }
+
+    .header-icon svg {
+      width: 16px;
+      height: 16px;
+    }
 
     .header-title {
       font-size: 14px;
@@ -189,11 +201,16 @@
       justify-content: center;
       transition: background var(--transition), color var(--transition);
     }
+
     .theme-toggle:hover {
       background: var(--bg-hover);
       color: var(--text-primary);
     }
-    .theme-toggle svg { width: 18px; height: 18px; }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+    }
 
     /* ================================================================
        MAIN LAYOUT
@@ -243,7 +260,11 @@
     /* ================================================================
        SAMPLE BUTTONS
        ================================================================ */
-    .samples { display: flex; flex-wrap: wrap; gap: 6px; }
+    .samples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
 
     .sample-btn {
       background: var(--bg-hover);
@@ -257,6 +278,7 @@
       cursor: pointer;
       transition: background var(--transition), color var(--transition);
     }
+
     .sample-btn:hover {
       background: var(--blue-subtle-bg);
       color: var(--blue);
@@ -265,7 +287,11 @@
     /* ================================================================
        TEXTAREA
        ================================================================ */
-    .textarea-wrap { flex: 1; display: flex; flex-direction: column; }
+    .textarea-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
 
     textarea {
       width: 100%;
@@ -283,15 +309,23 @@
       outline: none;
       transition: border-color var(--transition), background var(--transition);
     }
+
     textarea:focus {
       border-color: var(--border-focus);
     }
-    textarea::placeholder { color: var(--text-muted); }
+
+    textarea::placeholder {
+      color: var(--text-muted);
+    }
 
     /* ================================================================
        CONTROLS
        ================================================================ */
-    .controls { display: flex; gap: 8px; align-items: center; }
+    .controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
 
     select {
       background: var(--bg-surface);
@@ -305,7 +339,10 @@
       cursor: pointer;
       transition: border-color var(--transition), background var(--transition);
     }
-    select:focus { border-color: var(--border-focus); }
+
+    select:focus {
+      border-color: var(--border-focus);
+    }
 
     .classify-btn {
       flex: 1;
@@ -324,8 +361,15 @@
       align-items: center;
       justify-content: center;
     }
-    .classify-btn:hover { background: var(--blue-hover); }
-    .classify-btn:active { opacity: 0.9; }
+
+    .classify-btn:hover {
+      background: var(--blue-hover);
+    }
+
+    .classify-btn:active {
+      opacity: 0.9;
+    }
+
     .classify-btn:disabled {
       background: var(--bg-hover);
       color: var(--text-muted);
@@ -348,20 +392,50 @@
       gap: 8px;
       animation: rowIn 0.25s ease-out both;
     }
-    .detail-row:last-child { border-bottom: none; }
 
-    @keyframes rowIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .detail-row:last-child {
+      border-bottom: none;
     }
 
-    .detail-row:nth-child(1) { animation-delay: 0.00s; }
-    .detail-row:nth-child(2) { animation-delay: 0.04s; }
-    .detail-row:nth-child(3) { animation-delay: 0.08s; }
-    .detail-row:nth-child(4) { animation-delay: 0.12s; }
-    .detail-row:nth-child(5) { animation-delay: 0.16s; }
-    .detail-row:nth-child(6) { animation-delay: 0.20s; }
-    .detail-row:nth-child(7) { animation-delay: 0.24s; }
+    @keyframes rowIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .detail-row:nth-child(1) {
+      animation-delay: 0.00s;
+    }
+
+    .detail-row:nth-child(2) {
+      animation-delay: 0.04s;
+    }
+
+    .detail-row:nth-child(3) {
+      animation-delay: 0.08s;
+    }
+
+    .detail-row:nth-child(4) {
+      animation-delay: 0.12s;
+    }
+
+    .detail-row:nth-child(5) {
+      animation-delay: 0.16s;
+    }
+
+    .detail-row:nth-child(6) {
+      animation-delay: 0.20s;
+    }
+
+    .detail-row:nth-child(7) {
+      animation-delay: 0.24s;
+    }
 
     .detail-label {
       width: 120px;
@@ -390,6 +464,7 @@
         flex-direction: column;
         gap: 2px;
       }
+
       .detail-label {
         width: auto;
         min-width: auto;
@@ -410,26 +485,59 @@
       line-height: 1.6;
     }
 
-    .loz-critical { background: var(--loz-red-bg);    color: var(--loz-red-text); }
-    .loz-high     { background: var(--loz-purple-bg); color: var(--loz-purple-text); }
-    .loz-medium   { background: var(--loz-yellow-bg); color: var(--loz-yellow-text); }
-    .loz-low      { background: var(--loz-green-bg);  color: var(--loz-green-text); }
+    .loz-critical {
+      background: var(--loz-red-bg);
+      color: var(--loz-red-text);
+    }
 
-    .loz-angry    { background: var(--loz-red-bg);    color: var(--loz-red-text); }
-    .loz-negative { background: var(--loz-yellow-bg); color: var(--loz-yellow-text); }
-    .loz-neutral  { background: var(--loz-blue-bg);   color: var(--loz-blue-text); }
-    .loz-positive { background: var(--loz-green-bg);  color: var(--loz-green-text); }
+    .loz-high {
+      background: var(--loz-purple-bg);
+      color: var(--loz-purple-text);
+    }
+
+    .loz-medium {
+      background: var(--loz-yellow-bg);
+      color: var(--loz-yellow-text);
+    }
+
+    .loz-low {
+      background: var(--loz-green-bg);
+      color: var(--loz-green-text);
+    }
+
+    .loz-angry {
+      background: var(--loz-red-bg);
+      color: var(--loz-red-text);
+    }
+
+    .loz-negative {
+      background: var(--loz-yellow-bg);
+      color: var(--loz-yellow-text);
+    }
+
+    .loz-neutral {
+      background: var(--loz-blue-bg);
+      color: var(--loz-blue-text);
+    }
+
+    .loz-positive {
+      background: var(--loz-green-bg);
+      color: var(--loz-green-text);
+    }
 
     /* ================================================================
        CONFIDENCE BAR
        ================================================================ */
-    .confidence-wrap { width: 100%; }
+    .confidence-wrap {
+      width: 100%;
+    }
 
     .confidence-header {
       display: flex;
       justify-content: flex-end;
       margin-bottom: 4px;
     }
+
     .confidence-pct {
       font-size: 12px;
       font-weight: 700;
@@ -442,6 +550,7 @@
       height: 6px;
       overflow: hidden;
     }
+
     .confidence-fill {
       height: 100%;
       border-radius: 4px;
@@ -465,11 +574,13 @@
       animation: rowIn 0.25s ease-out both;
       animation-delay: 0.28s;
     }
+
     .flag-review {
       background: var(--flag-yellow-bg);
       border: 1px solid var(--flag-yellow-border);
       color: var(--flag-yellow-text);
     }
+
     .flag-injection {
       background: var(--flag-red-bg);
       border: 1px solid var(--flag-red-border);
@@ -490,13 +601,27 @@
       padding: 40px 20px;
       color: var(--text-muted);
     }
-    .empty-state svg { width: 40px; height: 40px; opacity: 0.3; color: var(--text-muted); }
-    .empty-state p { font-size: 13px; max-width: 240px; line-height: 1.5; }
+
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      opacity: 0.3;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 13px;
+      max-width: 240px;
+      line-height: 1.5;
+    }
 
     /* ================================================================
        SKELETON (Flat)
        ================================================================ */
-    .skeleton-list { display: flex; flex-direction: column; }
+    .skeleton-list {
+      display: flex;
+      flex-direction: column;
+    }
 
     .skeleton-row {
       display: flex;
@@ -505,7 +630,10 @@
       border-bottom: 1px solid var(--border);
       gap: 8px;
     }
-    .skeleton-row:last-child { border-bottom: none; }
+
+    .skeleton-row:last-child {
+      border-bottom: none;
+    }
 
     .skeleton-line {
       height: 10px;
@@ -514,14 +642,36 @@
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
     }
-    .sk-label { width: 100px; height: 8px; }
-    .sk-value { flex: 1; max-width: 160px; height: 12px; }
-    .sk-bar   { flex: 1; height: 6px; }
-    .sk-text  { flex: 1; height: 10px; }
+
+    .sk-label {
+      width: 100px;
+      height: 8px;
+    }
+
+    .sk-value {
+      flex: 1;
+      max-width: 160px;
+      height: 12px;
+    }
+
+    .sk-bar {
+      flex: 1;
+      height: 6px;
+    }
+
+    .sk-text {
+      flex: 1;
+      height: 10px;
+    }
 
     @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
     }
 
     /* ================================================================
@@ -544,14 +694,19 @@
       display: inline-block;
       width: 14px;
       height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
       margin-right: 6px;
       vertical-align: middle;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* ================================================================
        FOOTER
@@ -594,6 +749,7 @@
       border-right: 1px solid var(--border);
       margin-right: 28px;
     }
+
     .stat-card:last-child {
       border-right: none;
       margin-right: 0;
@@ -614,8 +770,14 @@
       color: var(--text-heading);
       line-height: 1.2;
     }
-    .stat-value.m-clean { color: var(--loz-green-text); }
-    .stat-value.m-alert { color: var(--loz-red-text); }
+
+    .stat-value.m-clean {
+      color: var(--loz-green-text);
+    }
+
+    .stat-value.m-alert {
+      color: var(--loz-red-text);
+    }
 
     @media (max-width: 768px) {
       .stats-strip {
@@ -623,6 +785,7 @@
         flex-wrap: wrap;
         gap: 0;
       }
+
       .stat-card {
         min-width: calc(50% - 12px);
         padding: 12px 0;
@@ -630,19 +793,44 @@
         border-bottom: 1px solid var(--border);
         margin-right: 0;
       }
-      .stat-card:nth-child(odd) { border-right: 1px solid var(--border); padding-right: 12px; }
-      .stat-card:nth-last-child(-n+2) { border-bottom: none; }
-      .stat-value { font-size: 16px; }
-      .footer { padding: 8px 12px; }
+
+      .stat-card:nth-child(odd) {
+        border-right: 1px solid var(--border);
+        padding-right: 12px;
+      }
+
+      .stat-card:nth-last-child(-n+2) {
+        border-bottom: none;
+      }
+
+      .stat-value {
+        font-size: 16px;
+      }
+
+      .footer {
+        padding: 8px 12px;
+      }
     }
 
     /* ================================================================
        SCROLLBAR
        ================================================================ */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
 
     /* ================================================================
        NOTICE MODAL
@@ -657,7 +845,10 @@
       justify-content: center;
       padding: 16px;
     }
-    #noticeBackdrop.hidden { display: none; }
+
+    #noticeBackdrop.hidden {
+      display: none;
+    }
 
     #noticeModal {
       background: var(--bg-surface-raised);
@@ -666,7 +857,7 @@
       max-width: 480px;
       width: 100%;
       padding: 28px 28px 24px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.36);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
     }
 
     #noticeModal .notice-header {
@@ -675,6 +866,7 @@
       gap: 10px;
       margin-bottom: 16px;
     }
+
     #noticeModal .notice-icon {
       width: 32px;
       height: 32px;
@@ -685,35 +877,42 @@
       justify-content: center;
       flex-shrink: 0;
     }
+
     #noticeModal .notice-icon svg {
       width: 18px;
       height: 18px;
       color: var(--blue);
     }
+
     #noticeModal .notice-title {
       font-size: 16px;
       font-weight: 600;
       color: var(--text-heading);
       letter-spacing: -0.01em;
     }
+
     #noticeModal .notice-body {
       font-size: 13.5px;
       color: var(--text-primary);
       line-height: 1.65;
       margin-bottom: 8px;
     }
+
     #noticeModal .notice-body ul {
       margin: 10px 0 10px 18px;
       padding: 0;
     }
+
     #noticeModal .notice-body ul li {
       margin-bottom: 5px;
     }
+
     #noticeModal .notice-footer {
       margin-top: 20px;
       display: flex;
       justify-content: flex-end;
     }
+
     #noticeModal .notice-btn {
       background: var(--blue);
       color: #fff;
@@ -726,279 +925,325 @@
       cursor: pointer;
       transition: background var(--transition);
     }
-    #noticeModal .notice-btn:hover { background: var(--blue-hover); }
+
+    #noticeModal .notice-btn:hover {
+      background: var(--blue-hover);
+    }
 
     @media (max-width: 480px) {
-      #noticeModal { padding: 20px 18px 18px; }
-      #noticeModal .notice-title { font-size: 15px; }
+      #noticeModal {
+        padding: 20px 18px 18px;
+      }
+
+      #noticeModal .notice-title {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ============================================================
+  <!-- ============================================================
      NOTICE MODAL
      ============================================================ -->
-<div id="noticeBackdrop" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
-  <div id="noticeModal">
-    <div class="notice-header">
-      <div class="notice-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
+  <div id="noticeBackdrop" role="dialog" aria-modal="true" aria-labelledby="noticeTitle">
+    <div id="noticeModal">
+      <div class="notice-header">
+        <div class="notice-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <span class="notice-title" id="noticeTitle">Ticket Categorizer</span>
       </div>
-      <span class="notice-title" id="noticeTitle">Ticket Categorizer</span>
-    </div>
-    <div class="notice-body">
-      <p>Welcome! This is a live demo of an <strong>AI-powered support ticket classifier</strong> built with <strong>LangGraph</strong> and the <strong>Gemini API</strong>.</p>
-      <p>Before you start testing, a quick note:</p>
-      <p>This demo runs on a personal API key with real usage costs. I would really appreciate if you could:</p>
-      <ul>
-        <li>Limit yourself to <strong>3–5 test classifications</strong> per session</li>
-        <li>Avoid sending very long or repeated tickets</li>
-        <li>Use the provided sample tickets to get a feel for how it works</li>
-      </ul>
-      <p>Your understanding goes a long way, thank you for being mindful!</p>
-    </div>
-    <div class="notice-footer">
-      <button class="notice-btn" id="noticeDismiss">Got it</button>
+      <div class="notice-body">
+        <p>Welcome! This is a live demo of an <strong>AI-powered support ticket classifier</strong> built with
+          <strong>LangGraph</strong> and the <strong>Gemini API</strong>.</p>
+        <p>Before you start testing, a quick note:</p>
+        <p>This demo runs on a personal API key with real usage costs. I would really appreciate if you could:</p>
+        <ul>
+          <li>Limit yourself to <strong>3–5 test classifications</strong> per session</li>
+          <li>Avoid sending very long or repeated tickets</li>
+          <li>Use the provided sample tickets to get a feel for how it works</li>
+        </ul>
+        <p>Your understanding goes a long way, thank you for being mindful!</p>
+        <p style="margin-top:12px; font-size:12px; color:var(--text-muted); font-style:italic;">⚠ No output? The API credits may have run out.</p>
+      </div>
+      <div class="notice-footer">
+        <button class="notice-btn" id="noticeDismiss">Got it</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  (function () {
-    var backdrop = document.getElementById('noticeBackdrop');
-    var btn = document.getElementById('noticeDismiss');
-    if (sessionStorage.getItem('noticeSeen')) {
-      backdrop.classList.add('hidden');
-    }
-    function dismiss() {
-      backdrop.classList.add('hidden');
-      sessionStorage.setItem('noticeSeen', '1');
-    }
-    btn.addEventListener('click', dismiss);
-    backdrop.addEventListener('click', function (e) {
-      if (e.target === backdrop) dismiss();
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') dismiss();
-    });
-  })();
-</script>
+  <script>
+    (function () {
+      var backdrop = document.getElementById('noticeBackdrop');
+      var btn = document.getElementById('noticeDismiss');
+      if (sessionStorage.getItem('noticeSeen')) {
+        backdrop.classList.add('hidden');
+      }
+      function dismiss() {
+        backdrop.classList.add('hidden');
+        sessionStorage.setItem('noticeSeen', '1');
+      }
+      btn.addEventListener('click', dismiss);
+      backdrop.addEventListener('click', function (e) {
+        if (e.target === backdrop) dismiss();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') dismiss();
+      });
+    })();
+  </script>
 
 
-<!-- ============================================================
+  <!-- ============================================================
      HEADER
      ============================================================ -->
-<header class="header">
-  <div class="header-left">
-    <div class="header-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 12l2 2 4-4"/>
-        <rect x="3" y="3" width="18" height="18" rx="3"/>
-      </svg>
+  <header class="header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M9 12l2 2 4-4" />
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+        </svg>
+      </div>
+      <span class="header-title">Ticket Categorizer</span>
     </div>
-    <span class="header-title">Ticket Categorizer</span>
-  </div>
-  <div class="header-right">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-      <svg id="iconMoon" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-      <svg id="iconSun" viewBox="0 0 24 24" fill="currentColor" style="display:none"><circle cx="12" cy="12" r="5"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
-    </button>
-  </div>
-</header>
+    <div class="header-right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg id="iconMoon" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+        <svg id="iconSun" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+          <circle cx="12" cy="12" r="5" />
+          <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </g>
+        </svg>
+      </button>
+    </div>
+  </header>
 
-<!-- ============================================================
+  <!-- ============================================================
      STATS STRIP
      ============================================================ -->
-<div class="stats-strip">
-  <div class="stat-card">
-    <div class="stat-label">Tokens</div>
-    <div class="stat-value" id="statusTokens">—</div>
+  <div class="stats-strip">
+    <div class="stat-card">
+      <div class="stat-label">Tokens</div>
+      <div class="stat-value" id="statusTokens">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Cost</div>
+      <div class="stat-value" id="statusCost">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">PII Status</div>
+      <div class="stat-value" id="statusPii">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Prompt</div>
+      <div class="stat-value" id="statusPrompt">—</div>
+    </div>
   </div>
-  <div class="stat-card">
-    <div class="stat-label">Cost</div>
-    <div class="stat-value" id="statusCost">—</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">PII Status</div>
-    <div class="stat-value" id="statusPii">—</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">Prompt</div>
-    <div class="stat-value" id="statusPrompt">—</div>
-  </div>
-</div>
 
-<!-- ============================================================
+  <!-- ============================================================
      MAIN
      ============================================================ -->
-<div class="main">
+  <div class="main">
 
-  <!-- LEFT: Input -->
-  <div class="panel">
-    <div class="panel-title">Ticket Input</div>
+    <!-- LEFT: Input -->
+    <div class="panel">
+      <div class="panel-title">Ticket Input</div>
 
-    <div class="samples">
-      <button class="sample-btn" id="sample0" onclick="fillSample(0)">📦 Delayed Delivery</button>
-      <button class="sample-btn" id="sample1" onclick="fillSample(1)">💳 Double Charged</button>
-      <button class="sample-btn" id="sample2" onclick="fillSample(2)">🔐 Login Broken</button>
-      <button class="sample-btn" id="sample3" onclick="fillSample(3)">🚨 Security Alert</button>
+      <div class="samples">
+        <button class="sample-btn" id="sample0" onclick="fillSample(0)">📦 Delayed Delivery</button>
+        <button class="sample-btn" id="sample1" onclick="fillSample(1)">💳 Double Charged</button>
+        <button class="sample-btn" id="sample2" onclick="fillSample(2)">🔐 Login Broken</button>
+        <button class="sample-btn" id="sample3" onclick="fillSample(3)">🚨 Security Alert</button>
+      </div>
+
+      <div class="textarea-wrap">
+        <textarea id="ticketText" placeholder="Enter support ticket text…"></textarea>
+      </div>
+
+      <div class="controls">
+        <select id="channel">
+          <option value="web_form">Web Form</option>
+          <option value="email">Email</option>
+        </select>
+        <button class="classify-btn" id="classifyBtn" onclick="classify()">Classify</button>
+      </div>
     </div>
 
-    <div class="textarea-wrap">
-      <textarea id="ticketText" placeholder="Enter support ticket text…"></textarea>
+    <!-- RIGHT: Results -->
+    <div class="panel" id="resultsPanel">
+      <div class="panel-title">Categorization Result</div>
+
+      <!-- Empty -->
+      <div class="empty-state" id="emptyState">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        <p>Submit a ticket to see the classification result</p>
+      </div>
+
+      <!-- Skeleton -->
+      <div class="skeleton-list" id="skeletonState" style="display:none;">
+        <div class="skeleton-row">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-value"></div>
+        </div>
+        <div class="skeleton-row">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-value"></div>
+        </div>
+        <div class="skeleton-row">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-value" style="max-width:80px"></div>
+        </div>
+        <div class="skeleton-row">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-value" style="max-width:90px"></div>
+        </div>
+        <div class="skeleton-row">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-bar"></div>
+        </div>
+        <div class="skeleton-row" style="border-bottom:none">
+          <div class="skeleton-line sk-label"></div>
+          <div class="skeleton-line sk-text"></div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="resultArea" style="display:none;"></div>
     </div>
 
-    <div class="controls">
-      <select id="channel">
-        <option value="web_form">Web Form</option>
-        <option value="email">Email</option>
-      </select>
-      <button class="classify-btn" id="classifyBtn" onclick="classify()">Classify</button>
-    </div>
   </div>
 
-  <!-- RIGHT: Results -->
-  <div class="panel" id="resultsPanel">
-    <div class="panel-title">Categorization Result</div>
-
-    <!-- Empty -->
-    <div class="empty-state" id="emptyState">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-      </svg>
-      <p>Submit a ticket to see the classification result</p>
-    </div>
-
-    <!-- Skeleton -->
-    <div class="skeleton-list" id="skeletonState" style="display:none;">
-      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value"></div></div>
-      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value"></div></div>
-      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value" style="max-width:80px"></div></div>
-      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-value" style="max-width:90px"></div></div>
-      <div class="skeleton-row"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-bar"></div></div>
-      <div class="skeleton-row" style="border-bottom:none"><div class="skeleton-line sk-label"></div><div class="skeleton-line sk-text"></div></div>
-    </div>
-
-    <!-- Result -->
-    <div id="resultArea" style="display:none;"></div>
-  </div>
-
-</div>
-
-<!-- ============================================================
+  <!-- ============================================================
      FOOTER
      ============================================================ -->
-<footer class="footer">
-  <div class="footer-powered">Powered by LangGraph &amp; Gemini API</div>
-</footer>
+  <footer class="footer">
+    <div class="footer-powered">Powered by LangGraph &amp; Gemini API</div>
+  </footer>
 
-<!-- ============================================================
+  <!-- ============================================================
      JAVASCRIPT
      ============================================================ -->
-<script>
-/* ------- Theme ------- */
-(function initTheme() {
-  const saved = localStorage.getItem('tc-theme');
-  if (saved) document.documentElement.setAttribute('data-theme', saved);
-  syncIcons();
-})();
+  <script>
+    /* ------- Theme ------- */
+    (function initTheme() {
+      const saved = localStorage.getItem('tc-theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      syncIcons();
+    })();
 
-function syncIcons() {
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  document.getElementById('iconMoon').style.display = dark ? 'block' : 'none';
-  document.getElementById('iconSun').style.display  = dark ? 'none'  : 'block';
-}
-
-document.getElementById('themeToggle').addEventListener('click', () => {
-  const html = document.documentElement;
-  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-theme', next);
-  localStorage.setItem('tc-theme', next);
-  syncIcons();
-});
-
-/* ------- Samples ------- */
-const SAMPLES = [
-  {
-    channel: "web_form",
-    text: "I am absolutely furious! My package was supposed to arrive 5 days ago and it still hasn't shown up. I've been waiting at home all week. This is completely unacceptable. Order #98765. I want an immediate update or a full refund!\nEmail: sanjay@xyzmail.com \nCredit card number: 1234567890123456",
-  },
-  {
-    channel: "email",
-    text: "Subject: Double charge on my account\n\nHello,\n\nI noticed I was charged twice for the same order (#44321) placed on March 15th. Both charges of $89.99 appear on my bank statement. Please refund one of the charges immediately. This is very concerning.\n\nThank you,\nA frustrated customer",
-  },
-  {
-    channel: "web_form",
-    text: "I can't log into my account at all. I keep getting 'Invalid credentials' even though I just reset my password 3 times. I need to access my order history urgently. Please help — I've been locked out for 2 days.",
-  },
-  {
-    channel: "email",
-    text: "URGENT SECURITY ISSUE: I found a vulnerability in your web application that allows me to view other users' billing details by changing the URL id parameter. This is a severe API IDOR security flaw. Please escalate this to your security team immediately.",
-  },
-];
-
-function fillSample(i) {
-  document.getElementById("ticketText").value = SAMPLES[i].text;
-  document.getElementById("channel").value = SAMPLES[i].channel;
-}
-
-/* ------- Helpers ------- */
-function lozPriority(p) {
-  return { low:"loz-low", medium:"loz-medium", high:"loz-high", critical:"loz-critical" }[p] || "";
-}
-function lozSentiment(s) {
-  return { positive:"loz-positive", neutral:"loz-neutral", negative:"loz-negative", angry:"loz-angry" }[s] || "";
-}
-function fmt(s) {
-  return s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-}
-
-/* ------- Classify ------- */
-async function classify() {
-  const text = document.getElementById("ticketText").value.trim();
-  if (!text) { alert("Please enter a ticket."); return; }
-
-  const btn = document.getElementById("classifyBtn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Classifying…';
-
-  document.getElementById("emptyState").style.display   = "none";
-  document.getElementById("resultArea").style.display    = "none";
-  document.getElementById("skeletonState").style.display = "flex";
-
-  try {
-    const resp = await fetch("http://localhost:8000/classify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ticket_text: text, channel: document.getElementById("channel").value }),
-    });
-    if (!resp.ok) {
-      const err = await resp.json();
-      throw new Error(err.detail || resp.statusText);
+    function syncIcons() {
+      const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+      document.getElementById('iconMoon').style.display = dark ? 'block' : 'none';
+      document.getElementById('iconSun').style.display = dark ? 'none' : 'block';
     }
-    renderResult(await resp.json());
-  } catch (e) {
-    document.getElementById("skeletonState").style.display = "none";
-    document.getElementById("emptyState").style.display    = "flex";
-    document.getElementById("emptyState").innerHTML =
-      `<div class="error-msg">⚠ Error: ${e.message}</div>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Classify";
-  }
-}
 
-/* ------- Render ------- */
-function renderResult(d) {
-  const area = document.getElementById("resultArea");
-  const pct  = Math.round(d.confidence_score * 100);
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('tc-theme', next);
+      syncIcons();
+    });
 
-  let html = `<div class="detail-list">
+    /* ------- Samples ------- */
+    const SAMPLES = [
+      {
+        channel: "web_form",
+        text: "I am absolutely furious! My package was supposed to arrive 5 days ago and it still hasn't shown up. I've been waiting at home all week. This is completely unacceptable. Order #98765. I want an immediate update or a full refund!\nEmail: abcd@gmail.com \nCredit card number: 1234567890123456",
+      },
+      {
+        channel: "email",
+        text: "Subject: Double charge on my account\n\nHello,\n\nI noticed I was charged twice for the same order (#44321) placed on March 15th. Both charges of $89.99 appear on my bank statement. Please refund one of the charges immediately. This is very concerning.\n\nThank you,\nA frustrated customer",
+      },
+      {
+        channel: "web_form",
+        text: "I can't log into my account at all. I keep getting 'Invalid credentials' even though I just reset my password 3 times. I need to access my order history urgently. Please help — I've been locked out for 2 days.",
+      },
+      {
+        channel: "email",
+        text: "URGENT SECURITY ISSUE: I found a vulnerability in your web application that allows me to view other users' billing details by changing the URL id parameter. This is a severe API IDOR security flaw. Please escalate this to your security team immediately.",
+      },
+    ];
+
+    function fillSample(i) {
+      document.getElementById("ticketText").value = SAMPLES[i].text;
+      document.getElementById("channel").value = SAMPLES[i].channel;
+    }
+
+    /* ------- Helpers ------- */
+    function lozPriority(p) {
+      return { low: "loz-low", medium: "loz-medium", high: "loz-high", critical: "loz-critical" }[p] || "";
+    }
+    function lozSentiment(s) {
+      return { positive: "loz-positive", neutral: "loz-neutral", negative: "loz-negative", angry: "loz-angry" }[s] || "";
+    }
+    function fmt(s) {
+      return s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    /* ------- Classify ------- */
+    async function classify() {
+      const text = document.getElementById("ticketText").value.trim();
+      if (!text) { alert("Please enter a ticket."); return; }
+
+      const btn = document.getElementById("classifyBtn");
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Classifying…';
+
+      document.getElementById("emptyState").style.display = "none";
+      document.getElementById("resultArea").style.display = "none";
+      document.getElementById("skeletonState").style.display = "flex";
+
+      try {
+        const resp = await fetch("http://localhost:8000/classify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ticket_text: text, channel: document.getElementById("channel").value }),
+        });
+        if (!resp.ok) {
+          const err = await resp.json();
+          throw new Error(err.detail || resp.statusText);
+        }
+        renderResult(await resp.json());
+      } catch (e) {
+        document.getElementById("skeletonState").style.display = "none";
+        document.getElementById("emptyState").style.display = "flex";
+        document.getElementById("emptyState").innerHTML =
+          `<div class="error-msg">⚠ Error: ${e.message}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Classify";
+      }
+    }
+
+    /* ------- Render ------- */
+    function renderResult(d) {
+      const area = document.getElementById("resultArea");
+      const pct = Math.round(d.confidence_score * 100);
+
+      let html = `<div class="detail-list">
     <div class="detail-row">
       <div class="detail-label">Category</div>
       <div class="detail-value">${fmt(d.issue_category)}</div>
@@ -1030,36 +1275,37 @@ function renderResult(d) {
     </div>
   </div>`;
 
-  if (d.requires_human_review) {
-    html += `<div class="flag flag-review">⚠ Flagged for human review</div>`;
-  }
-  if (d.injection_blocked) {
-    html += `<div class="flag flag-injection">🚫 Injection attempt blocked</div>`;
-  }
+      if (d.requires_human_review) {
+        html += `<div class="flag flag-review">⚠ Flagged for human review</div>`;
+      }
+      if (d.injection_blocked) {
+        html += `<div class="flag flag-injection">🚫 Injection attempt blocked</div>`;
+      }
 
-  area.innerHTML = html;
+      area.innerHTML = html;
 
-  // Animate bar
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const bar = document.getElementById("confBar");
-      if (bar) bar.style.width = pct + "%";
-    });
-  });
+      // Animate bar
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const bar = document.getElementById("confBar");
+          if (bar) bar.style.width = pct + "%";
+        });
+      });
 
-  // Status
-  const c = d.cost_info;
-  document.getElementById("statusTokens").textContent = c ? `${c.input_tokens} in / ${c.output_tokens} out` : "—";
-  document.getElementById("statusCost").textContent   = c ? `$${c.total_cost_usd.toFixed(6)}` : "—";
-  const piiEl = document.getElementById("statusPii");
-  piiEl.textContent = d.pii_detected ? "DETECTED" : "Clean";
-  piiEl.className   = "stat-value " + (d.pii_detected ? "m-alert" : "m-clean");
-  document.getElementById("statusPrompt").textContent = d.prompt_version || "—";
+      // Status
+      const c = d.cost_info;
+      document.getElementById("statusTokens").textContent = c ? `${c.input_tokens} in / ${c.output_tokens} out` : "—";
+      document.getElementById("statusCost").textContent = c ? `$${c.total_cost_usd.toFixed(6)}` : "—";
+      const piiEl = document.getElementById("statusPii");
+      piiEl.textContent = d.pii_detected ? "DETECTED" : "Clean";
+      piiEl.className = "stat-value " + (d.pii_detected ? "m-alert" : "m-clean");
+      document.getElementById("statusPrompt").textContent = d.prompt_version || "—";
 
-  document.getElementById("skeletonState").style.display = "none";
-  document.getElementById("emptyState").style.display    = "none";
-  area.style.display = "block";
-}
-</script>
+      document.getElementById("skeletonState").style.display = "none";
+      document.getElementById("emptyState").style.display = "none";
+      area.style.display = "block";
+    }
+  </script>
 </body>
+
 </html>
