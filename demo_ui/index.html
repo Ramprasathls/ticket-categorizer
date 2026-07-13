@@ -1217,7 +1217,7 @@
       document.getElementById("skeletonState").style.display = "flex";
 
       try {
-        const resp = await fetch("http://localhost:8000/classify", {
+        const resp = await fetch("/classify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ticket_text: text, channel: document.getElementById("channel").value }),
