@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ticket Classifier — AI-Powered Support Triage</title>
+  <title>Ticket Categorizer — AI-Powered Support Triage</title>
   <meta name="description" content="Classify customer support tickets instantly with AI. Detects priority, sentiment, PII, and routes to the right team." />
   <style>
     /* ================================================================
@@ -559,47 +559,81 @@
     .footer {
       background: var(--bg-footer);
       border-top: 1px solid var(--border);
-      padding: 8px 24px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
+      justify-content: center;
       transition: background var(--transition), border-color var(--transition);
     }
 
-    .footer-metrics {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .metric {
-      font-size: 11px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .metric .m-label { font-weight: 400; }
-    .metric .m-value { font-weight: 600; color: var(--text-secondary); }
-    .metric .m-clean { font-weight: 600; color: var(--loz-green-text); }
-    .metric .m-alert { font-weight: 700; color: var(--loz-red-text); }
-
     .footer-powered {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-muted);
       font-weight: 400;
     }
 
+    /* ================================================================
+       STATS STRIP
+       ================================================================ */
+    .stats-strip {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 14px 28px 14px 0;
+      min-width: 120px;
+      border-right: 1px solid var(--border);
+      margin-right: 28px;
+    }
+    .stat-card:last-child {
+      border-right: none;
+      margin-right: 0;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1.2;
+    }
+    .stat-value.m-clean { color: var(--loz-green-text); }
+    .stat-value.m-alert { color: var(--loz-red-text); }
+
     @media (max-width: 768px) {
-      .footer {
-        padding: 8px 12px;
-        justify-content: center;
-        text-align: center;
+      .stats-strip {
+        padding: 0 12px;
+        flex-wrap: wrap;
+        gap: 0;
       }
-      .footer-metrics { justify-content: center; }
+      .stat-card {
+        min-width: calc(50% - 12px);
+        padding: 12px 0;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        margin-right: 0;
+      }
+      .stat-card:nth-child(odd) { border-right: 1px solid var(--border); padding-right: 12px; }
+      .stat-card:nth-last-child(-n+2) { border-bottom: none; }
+      .stat-value { font-size: 16px; }
+      .footer { padding: 8px 12px; }
     }
 
     /* ================================================================
@@ -767,7 +801,7 @@
         <rect x="3" y="3" width="18" height="18" rx="3"/>
       </svg>
     </div>
-    <span class="header-title">Ticket Classifier</span>
+    <span class="header-title">Ticket Categorizer</span>
   </div>
   <div class="header-right">
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -776,6 +810,28 @@
     </button>
   </div>
 </header>
+
+<!-- ============================================================
+     STATS STRIP
+     ============================================================ -->
+<div class="stats-strip">
+  <div class="stat-card">
+    <div class="stat-label">Tokens</div>
+    <div class="stat-value" id="statusTokens">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Cost</div>
+    <div class="stat-value" id="statusCost">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">PII Status</div>
+    <div class="stat-value" id="statusPii">—</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Prompt</div>
+    <div class="stat-value" id="statusPrompt">—</div>
+  </div>
+</div>
 
 <!-- ============================================================
      MAIN
@@ -808,7 +864,7 @@
 
   <!-- RIGHT: Results -->
   <div class="panel" id="resultsPanel">
-    <div class="panel-title">Classification Result</div>
+    <div class="panel-title">Categorization Result</div>
 
     <!-- Empty -->
     <div class="empty-state" id="emptyState">
@@ -838,24 +894,6 @@
      FOOTER
      ============================================================ -->
 <footer class="footer">
-  <div class="footer-metrics">
-    <div class="metric">
-      <span class="m-label">Tokens</span>
-      <span class="m-value" id="statusTokens">—</span>
-    </div>
-    <div class="metric">
-      <span class="m-label">Cost</span>
-      <span class="m-value" id="statusCost">—</span>
-    </div>
-    <div class="metric">
-      <span class="m-label">PII</span>
-      <span class="m-value" id="statusPii">—</span>
-    </div>
-    <div class="metric">
-      <span class="m-label">Prompt</span>
-      <span class="m-value" id="statusPrompt">—</span>
-    </div>
-  </div>
   <div class="footer-powered">Powered by LangGraph &amp; Gemini API</div>
 </footer>
 
@@ -1013,9 +1051,9 @@ function renderResult(d) {
   const c = d.cost_info;
   document.getElementById("statusTokens").textContent = c ? `${c.input_tokens} in / ${c.output_tokens} out` : "—";
   document.getElementById("statusCost").textContent   = c ? `$${c.total_cost_usd.toFixed(6)}` : "—";
-  document.getElementById("statusPii").innerHTML      = d.pii_detected
-    ? '<span class="m-alert">PII DETECTED</span>'
-    : '<span class="m-clean">Clean</span>';
+  const piiEl = document.getElementById("statusPii");
+  piiEl.textContent = d.pii_detected ? "DETECTED" : "Clean";
+  piiEl.className   = "stat-value " + (d.pii_detected ? "m-alert" : "m-clean");
   document.getElementById("statusPrompt").textContent = d.prompt_version || "—";
 
   document.getElementById("skeletonState").style.display = "none";
