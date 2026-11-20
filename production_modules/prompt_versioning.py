@@ -74,7 +74,8 @@ def get_latest() -> dict:
 
 
 def get_active_version() -> str:
-    return os.getenv("PROMPT_VERSION", "v2")
+    # Normalise so "V3" or " v3 " (easy typos in a hosting dashboard) still resolve.
+    return os.getenv("PROMPT_VERSION", "v2").strip().lower()
 
 
 def get_active_prompt() -> dict:
