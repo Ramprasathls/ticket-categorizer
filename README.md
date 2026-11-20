@@ -2,6 +2,7 @@
 
 **AI-powered support ticket classifier built with LangGraph and the Gemini API.**
 
+🌐 **Live demo (New Link):** [https://ticket-categorizer-steel.vercel.app/]
 🌐 **Live demo:** [https://ticket-categorizer.onrender.com/]
 
 ---
